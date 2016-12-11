@@ -10,7 +10,9 @@ public class Klijent extends Thread {
 	static boolean kraj = false;
 	static DatagramSocket dSoket = null;
 	static byte[] podaciOdServera = null;
+	static byte[] podaciZaServer = null;
 	static DatagramPacket paketOdServera = null;
+	static DatagramPacket paketZaServer = null;
 
 	public static void main(String[] args) {
 		int port = 6666;
@@ -21,7 +23,16 @@ public class Klijent extends Thread {
 			ulaznTokOdServera = new BufferedReader(new InputStreamReader(soket.getInputStream()));
 
 			new Thread(new Klijent()).start();
+
+			dSoket = new DatagramSocket();
 			getInformationUDP();
+			InetAddress IPAddress = InetAddress.getByName("localhost");
+			podaciZaServer = new byte[1024];
+			String starter = "obavestavam te o mom broju porta.";
+			podaciZaServer = starter.getBytes();
+			paketZaServer = new DatagramPacket(podaciZaServer, podaciZaServer.length, IPAddress, 7777);
+			dSoket.send(paketZaServer);
+			System.out.println("poslao starter");
 
 			while (!kraj) {
 				izlazniTokKaServeru.println(ulazSaKonzole.readLine());
@@ -45,9 +56,6 @@ public class Klijent extends Thread {
 				while (!kraj) {
 					try {
 
-						dSoket = new DatagramSocket(6666);
-						// InetAddress IPAddress =
-						// InetAddress.getByName("localhost");
 						podaciOdServera = new byte[1024];
 						paketOdServera = new DatagramPacket(podaciOdServera, podaciOdServera.length);
 						dSoket.receive(paketOdServera);
@@ -64,7 +72,7 @@ public class Klijent extends Thread {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} finally {
-						dSoket.close();
+
 					}
 				}
 			}
@@ -78,11 +86,15 @@ public class Klijent extends Thread {
 
 		try {
 			while ((linijaOdServera = ulaznTokOdServera.readLine()) != null) {
+/*
+				if (linijaOdServera.contains("///linija")) {
+					izlazniTokKaServeru.println("///potvrda");
+					linijaOdServera = linijaOdServera.replaceAll("///linija", " ");
+				}
+*/
 				System.out.println(linijaOdServera);
 
-				// izlazniTokKaServeru.println("1"); moram da razdvojim ulaz i
-				// izlaz nekako
-				if (linijaOdServera.contains("***Dovidjen")) {
+				if (linijaOdServera.contains("///Dovidjenja")) {
 					kraj = true;
 					return;
 				}
