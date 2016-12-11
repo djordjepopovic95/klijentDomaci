@@ -86,12 +86,7 @@ public class Klijent extends Thread {
 
 		try {
 			while ((linijaOdServera = ulaznTokOdServera.readLine()) != null) {
-/*
-				if (linijaOdServera.contains("///linija")) {
-					izlazniTokKaServeru.println("///potvrda");
-					linijaOdServera = linijaOdServera.replaceAll("///linija", " ");
-				}
-*/
+
 				System.out.println(linijaOdServera);
 
 				if (linijaOdServera.contains("///Dovidjenja")) {
